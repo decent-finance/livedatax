@@ -12,6 +12,22 @@ MutableLiveData<Int>()
     .switchMap { MutableLiveData(it.toString()) }
 ```
 
+## Installation
+Add the following repository to your top-level `build.gradle`
+
+```groovy
+allprojects {
+    repositories {
+        maven {	url 'https://dl.bintray.com/decent-finance/utils' }
+    }
+}
+```
+
+Add the following dependency to your module-level `buld.gradle`
+```groovy
+implementation "com.cexdirect:livedatax:$someVersion"
+```
+
 ## Licence
 
 ```
