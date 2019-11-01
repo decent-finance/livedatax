@@ -1,6 +1,6 @@
 # LiveDataX
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/7c8b9a85f89925841800/maintainability)](https://codeclimate.com/github/decent-finance/livedatax/maintainability)
+![CircleCI](https://img.shields.io/circleci/build/github/decent-finance/livedatax?token=76b540311f5461a4524860369077af30aa910428) [![Maintainability](https://api.codeclimate.com/v1/badges/7c8b9a85f89925841800/maintainability)](https://codeclimate.com/github/decent-finance/livedatax/maintainability)
 
 A set of extension functions which can be used to apply transformations to your LiveData to make it look like you are using RxJava.
 

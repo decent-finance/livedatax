@@ -1,0 +1,75 @@
+version: 2.1
+
+executors:
+  android:
+    docker:
+      - image: circleci/android:api-29
+    working_directory: ~/livedatax
+
+jobs:
+  test:
+    executor: android
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - run:
+          name: Make gradlew executable
+          command: chmod +x gradlew
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "livedatax/build.gradle" }}
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "livedatax/build.gradle" }}
+      - run:
+          name: Run Tests
+          command: ./gradlew livedatax:testDebugUnitTest
+      - store_test_results:
+          path: livedatax/build/test-results
+  publish:
+    executor: android
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - run:
+          name: Make Gradlew Executable
+          command: chmod +x gradlew
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "livedatax/build.gradle" }}
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "livedatax/build.gradle" }}
+      - run:
+          name: Assemble Release
+          command: ./gradlew livedatax:assembleRelease
+      - run:
+          name: Publish Artifact
+          command: ./gradlew livedatax:bintrayUpload
+
+workflows:
+  version: 2.1
+  build:
+    jobs:
+      - test
+      - approve_publish:
+          type: approval
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
+      - publish:
+          requires:
+            - approve_publish
+          filters:
+            branches:
+              only: master
