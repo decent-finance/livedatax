@@ -1,5 +1,7 @@
 # LiveDataX
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/7c8b9a85f89925841800/maintainability)](https://codeclimate.com/github/decent-finance/livedatax/maintainability)
+
 A set of extension functions which can be used to apply transformations to your LiveData to make it look like you are using RxJava.
 
 ## Example
