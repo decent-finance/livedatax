@@ -1,0 +1,8 @@
+<component name="CopyrightManager">
+  <settings>
+    <module2copyright>
+      <element module="Project Source Files" copyright="ALv2" />
+      <element module="Tests" copyright="ALv2" />
+    </module2copyright>
+  </settings>
+</component>
