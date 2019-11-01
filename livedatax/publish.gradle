@@ -46,7 +46,7 @@ bintray {
         name = 'com.cexdirect.livedatax'
         userOrg = 'decent-finance'
         licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/decent-finance/direct-android.git'
+        vcsUrl = 'https://github.com/decent-finance/livedatax.git'
         description = 'LiveData extensions'
         version {
             name = this.version
