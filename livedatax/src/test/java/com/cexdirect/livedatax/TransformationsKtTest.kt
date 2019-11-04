@@ -18,6 +18,7 @@ package com.cexdirect.livedatax
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import com.jraska.livedata.test
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.junit.Test
 
@@ -74,5 +75,22 @@ class TransformationsKtTest {
             given.value = 5
             given.value = 4
         }.assertNever { it == -1 }.assertValue(5).assertNever { it == 4 }
+    }
+
+    @Test
+    fun combineLatestWith() {
+        val given = MutableLiveData<Int>()
+        val other = MutableLiveData<String>()
+
+        given.combineLatestWith(other) { first, second ->
+            "$first$second"
+        }.test().apply {
+            given.value = 1
+            other.value = "A"
+            other.value = "B"
+            given.value = 2
+        }.valueHistory().let {
+            assertThat(it).containsExactly("1A", "1B", "2B")
+        }
     }
 }

@@ -57,3 +57,21 @@ fun <X> LiveData<X>.distinctUntilChanged(compareFunction: (previous: X, current:
             }
         })
     }
+
+fun <X, Y, Z> LiveData<X>.combineLatestWith(
+    other: LiveData<Y>,
+    combineFunction: (first: X, second: Y) -> Z
+) = MediatorLiveData<Z>().apply {
+    addSource(this@combineLatestWith) {
+        val otherValue = other.value
+        if (otherValue != null) {
+            value = combineFunction.invoke(it, otherValue)
+        }
+    }
+    addSource(other) {
+        val thisValue = this@combineLatestWith.value
+        if (thisValue != null) {
+            value = combineFunction.invoke(thisValue, it)
+        }
+    }
+}
