@@ -31,50 +31,70 @@ class TransformationsKtTest {
     fun filter() {
         val given = MutableLiveData<Int>()
 
-        given.filter { it > 10 }.test().apply {
-            given.value = 5
-            given.value = 20
-        }.assertNever { it <= 10 }.assertValue(20).assertHistorySize(1)
+        given.filter { it > 10 }
+            .test()
+            .apply {
+                given.value = 5
+                given.value = 20
+            }
+            .assertNever { it <= 10 }
+            .assertValue(20)
+            .assertHistorySize(1)
     }
 
     @Test
     fun map() {
         val given = MutableLiveData<Int>()
 
-        given.map { it + 10 }.test().apply { given.value = 5 }.assertValue(15).assertHistorySize(1)
+        given.map { it + 10 }
+            .test()
+            .apply { given.value = 5 }
+            .assertValue(15)
+            .assertHistorySize(1)
     }
 
     @Test
     fun switchMap() {
         val given = MutableLiveData<Int>()
 
-        given.switchMap { MutableLiveData(it.toString()) }.test().apply {
-            given.value = 100500
-        }.assertValue("100500").assertHistorySize(1)
+        given.switchMap { MutableLiveData(it.toString()) }
+            .test()
+            .apply { given.value = 100500 }
+            .assertValue("100500")
+            .assertHistorySize(1)
     }
 
     @Test
     fun distinctUntilChanged() {
         val given = MutableLiveData(1)
 
-        given.distinctUntilChanged().test().apply {
-            given.value = 1
-            given.value = 1
-            given.value = 10
-        }.assertValue(10).assertHistorySize(2)
+        given.distinctUntilChanged()
+            .test()
+            .apply {
+                given.value = 1
+                given.value = 1
+                given.value = 10
+            }
+            .assertValue(10)
+            .assertHistorySize(2)
     }
 
     @Test
     fun distinctUntilChangedWithComparator() {
         val given = MutableLiveData(1)
 
-        given.distinctUntilChanged { previous, current ->
-            current > previous
-        }.test().apply {
-            given.value = -1
-            given.value = 5
-            given.value = 4
-        }.assertNever { it == -1 }.assertValue(5).assertNever { it == 4 }
+        given.distinctUntilChanged { previous, current -> current > previous }
+            .test()
+            .apply {
+                given.value = -1
+                given.value = 5
+                given.value = 5
+                given.value = 4
+            }
+            .assertNever { it == -1 }
+            .assertValue(5)
+            .assertNever { it == 4 }
+            .assertHistorySize(2)
     }
 
     @Test
@@ -82,15 +102,15 @@ class TransformationsKtTest {
         val given = MutableLiveData<Int>()
         val other = MutableLiveData<String>()
 
-        given.combineLatestWith(other) { first, second ->
-            "$first$second"
-        }.test().apply {
-            given.value = 1
-            other.value = "A"
-            other.value = "B"
-            given.value = 2
-        }.valueHistory().let {
-            assertThat(it).containsExactly("1A", "1B", "2B")
-        }
+        given.combineLatestWith(other) { first, second -> "$first$second" }
+            .test()
+            .apply {
+                given.value = 1
+                other.value = "A"
+                other.value = "B"
+                given.value = 2
+            }
+            .valueHistory()
+            .let { assertThat(it).containsExactly("1A", "1B", "2B") }
     }
 }

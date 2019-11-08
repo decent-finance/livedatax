@@ -17,10 +17,14 @@
 
 package com.cexdirect.livedatax
 
+import android.os.Handler
+import android.os.Looper
+import androidx.annotation.RestrictTo
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
+import java.util.concurrent.TimeUnit
 
 fun <X> LiveData<X>.filter(predicate: (value: X) -> Boolean): LiveData<X> =
     MediatorLiveData<X>().apply {
@@ -75,3 +79,12 @@ fun <X, Y, Z> LiveData<X>.combineLatestWith(
         }
     }
 }
+
+fun <X> LiveData<X>.throttleFirst(duration: Long, timeUnit: TimeUnit) =
+    this.throttleFirst(Handler(Looper.getMainLooper()), duration, timeUnit)
+
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+internal fun <X> LiveData<X>.throttleFirst(handler: Handler, duration: Long, timeUnit: TimeUnit) =
+    ThrottlingLiveData<X>(handler, duration, timeUnit).apply {
+        addSource(this@throttleFirst) { item -> setValue(item) }
+    } as MediatorLiveData<X>
