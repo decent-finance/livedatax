@@ -46,8 +46,7 @@ internal class ThrottlingLiveData<X> internal constructor(
     }
 
     override fun setValue(value: X) {
-        if (!isThrottling.get()) {
-            isThrottling.compareAndSet(false, true)
+        if (isThrottling.compareAndSet(false, true)) {
             super.setValue(value)
             handler.postDelayed(resetRunnable, timeUnit.toMillis(duration))
         }
